@@ -1,0 +1,19 @@
+# C# / .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+*.userprefs
+.idea/
+*.DotSettings.user
+
+# Операційна система
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Конфіденційні дані
+*.env
+appsettings.Development.json
+secrets.json
