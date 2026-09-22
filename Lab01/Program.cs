@@ -1,2 +1,8 @@
-﻿// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
+﻿using Lab01;
+
+Console.OutputEncoding = System.Text.Encoding.UTF8;
+
+System.Threading.Thread.CurrentThread.CurrentCulture =
+    System.Globalization.CultureInfo.InvariantCulture;
+
+Task1.Run();
