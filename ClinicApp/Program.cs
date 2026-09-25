@@ -34,3 +34,30 @@ Console.WriteLine(patient2);
 Console.WriteLine(patient3);
 Console.WriteLine(patient4);
 Console.WriteLine(patient5);
+
+Console.WriteLine();
+
+Doctor doctor1 = new Doctor(
+    "Віктор",
+    "Кравченко",
+    "Кардіологія",
+    "LIC-101",
+    "0444567890");
+
+Doctor doctor2 = new Doctor(
+    "Ірина",
+    "Бондар",
+    "Неврологія",
+    "LIC-102",
+    "0445678901");
+
+Doctor doctor3 = new Doctor(
+    "Тарас",
+    "Гнатюк",
+    "Педіатрія",
+    "LIC-103",
+    "0446789012");
+
+Console.WriteLine(doctor1);
+Console.WriteLine(doctor2);
+Console.WriteLine(doctor3);
