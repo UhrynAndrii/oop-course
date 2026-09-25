@@ -76,6 +76,75 @@ doctorManager.Add(doctor1);
 doctorManager.Add(doctor2);
 doctorManager.Add(doctor3);
 
+Appointment appointment1 = new Appointment(
+    patient1.Id,
+    doctor1.Id,
+    new DateTime(2026, 9, 26, 10, 0, 0));
+
+Appointment appointment2 = new Appointment(
+    patient2.Id,
+    doctor2.Id,
+    new DateTime(2026, 9, 26, 11, 0, 0),
+    45);
+
+Appointment appointment3 = new Appointment(
+    patient3.Id,
+    doctor3.Id,
+    new DateTime(2026, 9, 27, 9, 0, 0),
+    20);
+
+Console.WriteLine();
+Console.WriteLine("=== Записи на прийом ===");
+Console.WriteLine(appointment1);
+Console.WriteLine(appointment2);
+Console.WriteLine(appointment3);
+
+Console.WriteLine();
+Console.WriteLine("=== Перевірка статусів ===");
+
+if (appointment1.Cancel("Пацієнт не зміг прийти"))
+{
+    Console.WriteLine("Запис №1 скасовано.");
+}
+else
+{
+    Console.WriteLine("Запис №1 вже не має статус Scheduled.");
+}
+
+if (appointment2.Complete())
+{
+    Console.WriteLine("Запис №2 завершено.");
+}
+else
+{
+    Console.WriteLine("Запис №2 вже не має статус Scheduled.");
+}
+
+Console.WriteLine();
+Console.WriteLine(appointment1);
+Console.WriteLine(appointment2);
+
+Console.WriteLine();
+Console.WriteLine("=== Перевірка повторного переходу ===");
+
+if (appointment1.Complete())
+{
+    Console.WriteLine("Запис №1 завершено.");
+}
+else
+{
+    Console.WriteLine("Не можна завершити скасований запис.");
+}
+
+if (appointment2.Cancel("Скасування після завершення"))
+{
+    Console.WriteLine("Запис №2 скасовано.");
+}
+else
+{
+    Console.WriteLine("Не можна скасувати завершений запис.");
+}
+
 void PatientsMenu()
 {
     while (true)
