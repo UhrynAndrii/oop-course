@@ -70,6 +70,12 @@ patientManager.Add(patient3);
 patientManager.Add(patient4);
 patientManager.Add(patient5);
 
+DoctorManager doctorManager = new DoctorManager();
+
+doctorManager.Add(doctor1);
+doctorManager.Add(doctor2);
+doctorManager.Add(doctor3);
+
 void PatientsMenu()
 {
     while (true)
@@ -168,4 +174,139 @@ void PatientsMenu()
     }
 }
 
+void DoctorsMenu()
+{
+    while (true)
+    {
+        Console.WriteLine();
+        Console.WriteLine("=== Лікарі ===");
+        Console.WriteLine("1. Показати всіх");
+        Console.WriteLine("2. Додати");
+        Console.WriteLine("3. Знайти за спеціальністю");
+        Console.WriteLine("4. Видалити");
+        Console.WriteLine("5. Статистика");
+        Console.WriteLine("6. Перевірити доступність на годину");
+        Console.WriteLine("0. Назад");
+        Console.Write("Ваш вибір: ");
+
+        string choice = Console.ReadLine()!;
+
+        Console.WriteLine();
+
+        if (choice == "1")
+        {
+            doctorManager.DisplayAll();
+        }
+        else if (choice == "2")
+        {
+            Console.Write("Ім'я: ");
+            string firstName = Console.ReadLine()!;
+
+            Console.Write("Прізвище: ");
+            string lastName = Console.ReadLine()!;
+
+            Console.Write("Спеціальність: ");
+            string speciality = Console.ReadLine()!;
+
+            Console.Write("Номер ліцензії: ");
+            string licenseNumber = Console.ReadLine()!;
+
+            Console.Write("Телефон: ");
+            string phone = Console.ReadLine()!;
+
+            Doctor doctor = new Doctor(
+                firstName,
+                lastName,
+                speciality,
+                licenseNumber,
+                phone);
+
+            doctorManager.Add(doctor);
+        }
+        else if (choice == "3")
+        {
+            Console.Write("Введіть спеціальність: ");
+            string speciality = Console.ReadLine()!;
+
+            Doctor[] results = doctorManager.FindBySpeciality(speciality);
+
+            if (results.Length == 0)
+            {
+                Console.WriteLine("Лікарів не знайдено.");
+            }
+            else
+            {
+                Console.WriteLine("Знайдені лікарі:");
+
+                for (int i = 0; i < results.Length; i++)
+                {
+                    Console.WriteLine(results[i]);
+                }
+            }
+        }
+        else if (choice == "4")
+        {
+            Console.Write("Введіть ID лікаря для видалення: ");
+            int id = int.Parse(Console.ReadLine()!);
+
+            if (doctorManager.Remove(id))
+            {
+                Console.WriteLine("Лікаря видалено.");
+            }
+            else
+            {
+                Console.WriteLine("Лікаря з таким ID не знайдено.");
+            }
+        }
+        else if (choice == "5")
+        {
+            doctorManager.DisplayStats();
+        }
+        else if (choice == "6")
+        {
+            Console.Write("Введіть годину (0-23): ");
+            string input = Console.ReadLine()!;
+
+            if (int.TryParse(input, out int hour) && hour >= 0 && hour <= 23)
+            {
+                Doctor[] doctors = doctorManager.GetAll();
+
+                if (doctors.Length == 0)
+                {
+                    Console.WriteLine("Список лікарів порожній.");
+                }
+                else
+                {
+                    Console.WriteLine($"Доступність лікарів о {hour:D2}:00:");
+
+                    for (int i = 0; i < doctors.Length; i++)
+                    {
+                        if (doctors[i].CanAcceptAt(hour))
+                        {
+                            Console.WriteLine($"{doctors[i].FullName} — доступний");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"{doctors[i].FullName} — недоступний");
+                        }
+                    }
+                }
+            }
+            else
+            {
+                Console.WriteLine("Некоректна година. Введіть число від 0 до 23.");
+            }
+        }
+        else if (choice == "0")
+        {
+            break;
+        }
+        else
+        {
+            Console.WriteLine("Невірний вибір.");
+        }
+    }
+}
+
 PatientsMenu();
+DoctorsMenu();
