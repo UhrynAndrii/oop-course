@@ -11,6 +11,19 @@ public class DoctorManager
         get { return _count; }
     }
 
+    public Doctor? this[int index]
+    {
+        get
+        {
+            if (index < 0 || index >= _count)
+            {
+                return null;
+            }
+
+            return _doctors[index];
+        }
+    }
+
     public void Add(Doctor doctor)
     {
         if (_count >= MaxDoctors)
@@ -38,6 +51,13 @@ public class DoctorManager
         return null;
     }
 
+    public bool TryFindById(int id, out Doctor doctor)
+    {
+        doctor = FindById(id)!;
+
+        return doctor != null;
+    }
+
     public Doctor[] FindBySpeciality(string speciality)
     {
         string searchSpeciality = speciality.ToLower();
@@ -45,7 +65,8 @@ public class DoctorManager
 
         for (int i = 0; i < _count; i++)
         {
-            string currentSpeciality = _doctors[i].Speciality.ToLower();
+            string currentSpeciality =
+                _doctors[i].Speciality.ToString().ToLower();
 
             if (currentSpeciality.Contains(searchSpeciality))
             {
@@ -58,9 +79,37 @@ public class DoctorManager
 
         for (int i = 0; i < _count; i++)
         {
-            string currentSpeciality = _doctors[i].Speciality.ToLower();
+            string currentSpeciality =
+                _doctors[i].Speciality.ToString().ToLower();
 
             if (currentSpeciality.Contains(searchSpeciality))
+            {
+                result[resultIndex] = _doctors[i];
+                resultIndex++;
+            }
+        }
+
+        return result;
+    }
+
+    public Doctor[] FindBySpeciality(Speciality speciality)
+    {
+        int foundCount = 0;
+
+        for (int i = 0; i < _count; i++)
+        {
+            if (_doctors[i].Speciality == speciality)
+            {
+                foundCount++;
+            }
+        }
+
+        Doctor[] result = new Doctor[foundCount];
+        int resultIndex = 0;
+
+        for (int i = 0; i < _count; i++)
+        {
+            if (_doctors[i].Speciality == speciality)
             {
                 result[resultIndex] = _doctors[i];
                 resultIndex++;
@@ -157,7 +206,7 @@ public class DoctorManager
 
             for (int j = 0; j < i; j++)
             {
-                if (_doctors[j].Speciality.ToLower() == _doctors[i].Speciality.ToLower())
+                if (_doctors[j].Speciality == _doctors[i].Speciality)
                 {
                     alreadyDisplayed = true;
                     break;
@@ -173,13 +222,14 @@ public class DoctorManager
 
             for (int j = 0; j < _count; j++)
             {
-                if (_doctors[j].Speciality.ToLower() == _doctors[i].Speciality.ToLower())
+                if (_doctors[j].Speciality == _doctors[i].Speciality)
                 {
                     specialityCount++;
                 }
             }
 
-            Console.WriteLine($"  {_doctors[i].Speciality}: {specialityCount}");
+            Console.WriteLine(
+                $"  {_doctors[i].Speciality}: {specialityCount}");
         }
 
         Console.WriteLine("==========================");
