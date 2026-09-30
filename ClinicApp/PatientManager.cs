@@ -11,6 +11,19 @@ public class PatientManager
         get { return _count; }
     }
 
+    public Patient? this[int index]
+    {
+        get
+        {
+            if (index < 0 || index >= _count)
+            {
+                return null;
+            }
+
+            return _patients[index];
+        }
+    }
+
     public void Add(Patient patient)
     {
         if (_count >= MaxPatients)
