@@ -85,6 +85,60 @@ clinic.DisplaySchedule(new DateTime(2026, 9, 26));
 
 clinic.GenerateReport();
 
+Console.WriteLine();
+Console.WriteLine("=== Тест Task 04 ===");
+
+Console.WriteLine();
+Console.WriteLine("Перевантаження FindBySpeciality:");
+
+Doctor[] cardiologists =
+    clinic.Doctors.FindBySpeciality(Speciality.Cardiology);
+
+Console.WriteLine($"За enum: знайдено {cardiologists.Length} лікарів.");
+
+Doctor[] foundDoctors =
+    clinic.Doctors.FindBySpeciality("кардіо");
+
+Console.WriteLine($"За рядком: знайдено {foundDoctors.Length} лікарів.");
+
+Console.WriteLine();
+Console.WriteLine("Перевантаження GetByDate:");
+
+Appointment[] appointmentsByNumbers =
+    clinic.Appointments.GetByDate(2026, 9, 26);
+
+Console.WriteLine(
+    $"За трьома числами: знайдено {appointmentsByNumbers.Length} записів.");
+
+Console.WriteLine();
+Console.WriteLine("TryFindById з out:");
+
+if (clinic.Patients.TryFindById(1, out Patient testPatient))
+{
+    Console.WriteLine("Знайдено: " + testPatient.FullName);
+}
+else
+{
+    Console.WriteLine("Пацієнта не знайдено.");
+}
+
+if (clinic.Doctors.TryFindById(1, out Doctor doctor))
+{
+    Console.WriteLine("Знайдено лікаря: " + doctor.FullName);
+}
+else
+{
+    Console.WriteLine("Лікаря не знайдено.");
+}
+
+Console.WriteLine();
+Console.WriteLine("Оператори ?. та ??:");
+
+string name =
+    clinic.Patients.FindById(99)?.FullName ?? "не знайдено";
+
+Console.WriteLine(name);
+
 void PatientsMenu(Clinic clinic)
 {
     while (true)
