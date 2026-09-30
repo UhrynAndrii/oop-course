@@ -603,6 +603,20 @@ void AppointmentsMenu(Clinic clinic)
 }
 
 Console.WriteLine();
+Console.WriteLine("=== Тест WorkSchedule ===");
+
+WorkSchedule morning = new WorkSchedule(8, 16);
+WorkSchedule evening = new WorkSchedule(14, 22);
+
+Console.WriteLine($"Ранковий розклад: {morning}");
+Console.WriteLine($"Вечірній розклад: {evening}");
+Console.WriteLine($"Ранковий розклад зараз: {morning.IsNow}");
+
+WorkSchedule copy = morning;
+
+Console.WriteLine($"Копія ранкового розкладу: {copy}");
+
+Console.WriteLine();
 Console.WriteLine("=== Тест GrowablePatientManager ===");
 Console.WriteLine("Додаємо пацієнтів одного за одним...");
 
