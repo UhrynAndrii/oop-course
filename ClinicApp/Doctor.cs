@@ -7,7 +7,7 @@ public class Doctor
     public int Id { get; }
     public string FirstName { get; set; }
     public string LastName { get; set; }
-    public string Speciality { get; set; }
+    public Speciality Speciality { get; set; }
     public string LicenseNumber { get; set; }
     public string Phone { get; set; }
     public int WorkStartHour { get; set; }
@@ -40,19 +40,29 @@ public class Doctor
     }
 
     public Doctor()
-        : this("Невідомий", "Лікар", "Невідомо", "Невідомо", "0000000000")
+        : this(
+            "Невідомий",
+            "Лікар",
+            Speciality.General,
+            "Невідомо",
+            "0000000000")
     {
     }
 
-    public Doctor(string firstName, string lastName, string speciality)
-        : this(firstName, lastName, speciality, "Невідомо", "0000000000")
+    public Doctor(string firstName, string lastName, Speciality speciality)
+        : this(
+            firstName,
+            lastName,
+            speciality,
+            "Невідомо",
+            "0000000000")
     {
     }
 
     public Doctor(
         string firstName,
         string lastName,
-        string speciality,
+        Speciality speciality,
         string licenseNumber,
         string phone)
     {

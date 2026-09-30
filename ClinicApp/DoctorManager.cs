@@ -45,7 +45,8 @@ public class DoctorManager
 
         for (int i = 0; i < _count; i++)
         {
-            string currentSpeciality = _doctors[i].Speciality.ToLower();
+            string currentSpeciality =
+                _doctors[i].Speciality.ToString().ToLower();
 
             if (currentSpeciality.Contains(searchSpeciality))
             {
@@ -58,7 +59,8 @@ public class DoctorManager
 
         for (int i = 0; i < _count; i++)
         {
-            string currentSpeciality = _doctors[i].Speciality.ToLower();
+            string currentSpeciality =
+                _doctors[i].Speciality.ToString().ToLower();
 
             if (currentSpeciality.Contains(searchSpeciality))
             {
@@ -157,7 +159,7 @@ public class DoctorManager
 
             for (int j = 0; j < i; j++)
             {
-                if (_doctors[j].Speciality.ToLower() == _doctors[i].Speciality.ToLower())
+                if (_doctors[j].Speciality == _doctors[i].Speciality)
                 {
                     alreadyDisplayed = true;
                     break;
@@ -173,13 +175,14 @@ public class DoctorManager
 
             for (int j = 0; j < _count; j++)
             {
-                if (_doctors[j].Speciality.ToLower() == _doctors[i].Speciality.ToLower())
+                if (_doctors[j].Speciality == _doctors[i].Speciality)
                 {
                     specialityCount++;
                 }
             }
 
-            Console.WriteLine($"  {_doctors[i].Speciality}: {specialityCount}");
+            Console.WriteLine(
+                $"  {_doctors[i].Speciality}: {specialityCount}");
         }
 
         Console.WriteLine("==========================");

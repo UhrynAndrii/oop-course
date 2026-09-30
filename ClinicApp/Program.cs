@@ -8,21 +8,21 @@ Patient patient1 = new Patient(
     "Андрій",
     "Мельник",
     new DateTime(1988, 4, 18),
-    "A+",
+    BloodType.APositive,
     "0504567891");
 
 Patient patient2 = new Patient(
     "Софія",
     "Романюк",
     new DateTime(1995, 9, 7),
-    "B-",
+    BloodType.BNegative,
     "0678123456");
 
 Patient patient3 = new Patient(
     "Данило",
     "Шевчук",
     new DateTime(2011, 2, 25),
-    "O+",
+    BloodType.OPositive,
     "0935678123");
 
 Patient patient4 = new Patient();
@@ -40,21 +40,21 @@ clinic.Patients.Add(patient5);
 Doctor doctor1 = new Doctor(
     "Віктор",
     "Кравченко",
-    "Кардіологія",
+    Speciality.Cardiology,
     "LIC-101",
     "0444567890");
 
 Doctor doctor2 = new Doctor(
     "Ірина",
     "Бондар",
-    "Неврологія",
+    Speciality.Neurology,
     "LIC-102",
     "0445678901");
 
 Doctor doctor3 = new Doctor(
     "Тарас",
     "Гнатюк",
-    "Педіатрія",
+    Speciality.Pediatrics,
     "LIC-103",
     "0446789012");
 
@@ -118,8 +118,20 @@ void PatientsMenu(Clinic clinic)
             Console.Write("Дата народження (рррр-мм-дд): ");
             DateTime dateOfBirth = DateTime.Parse(Console.ReadLine()!);
 
-            Console.Write("Група крові: ");
-            string bloodType = Console.ReadLine()!;
+            Console.WriteLine("Оберіть групу крові:");
+            Console.WriteLine("0 - Unknown");
+            Console.WriteLine("1 - APositive");
+            Console.WriteLine("2 - ANegative");
+            Console.WriteLine("3 - BPositive");
+            Console.WriteLine("4 - BNegative");
+            Console.WriteLine("5 - ABPositive");
+            Console.WriteLine("6 - ABNegative");
+            Console.WriteLine("7 - OPositive");
+            Console.WriteLine("8 - ONegative");
+            Console.Write("Ваш вибір: ");
+
+            int bloodTypeNumber = int.Parse(Console.ReadLine()!);
+            BloodType bloodType = (BloodType)bloodTypeNumber;
 
             Console.Write("Телефон: ");
             string phone = Console.ReadLine()!;
@@ -214,8 +226,21 @@ void DoctorsMenu(Clinic clinic)
             Console.Write("Прізвище: ");
             string lastName = Console.ReadLine()!;
 
-            Console.Write("Спеціальність: ");
-            string speciality = Console.ReadLine()!;
+            Console.WriteLine("Оберіть спеціальність:");
+
+            Console.WriteLine("0 - General");
+            Console.WriteLine("1 - Cardiology");
+            Console.WriteLine("2 - Neurology");
+            Console.WriteLine("3 - Pediatrics");
+            Console.WriteLine("4 - Surgery");
+            Console.WriteLine("5 - Orthopedics");
+            Console.WriteLine("6 - Dermatology");
+            Console.WriteLine("7 - Emergency");
+
+            Console.Write("Ваш вибір: ");
+
+            int specialityNumber = int.Parse(Console.ReadLine()!);
+            Speciality speciality = (Speciality)specialityNumber;
 
             Console.Write("Номер ліцензії: ");
             string licenseNumber = Console.ReadLine()!;

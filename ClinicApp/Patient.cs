@@ -8,7 +8,7 @@ public class Patient
     public string FirstName { get; set; }
     public string LastName { get; set; }
     public DateTime DateOfBirth { get; set; }
-    public string BloodType { get; set; }
+    public BloodType BloodType { get; set; }
     public string Phone { get; set; }
     public string Email { get; set; }
 
@@ -38,12 +38,22 @@ public class Patient
     }
 
     public Patient()
-        : this("Невідомий", "Пацієнт", DateTime.Today, "Невідомо", "0000000000")
+        : this(
+            "Невідомий",
+            "Пацієнт",
+            DateTime.Today,
+            BloodType.Unknown,
+            "0000000000")
     {
     }
 
     public Patient(string firstName, string lastName)
-        : this(firstName, lastName, DateTime.Today, "Невідомо", "0000000000")
+        : this(
+            firstName,
+            lastName,
+            DateTime.Today,
+            BloodType.Unknown,
+            "0000000000")
     {
     }
 
@@ -51,7 +61,7 @@ public class Patient
         string firstName,
         string lastName,
         DateTime dob,
-        string bloodType,
+        BloodType bloodType,
         string phone)
     {
         Id = _nextId++;
