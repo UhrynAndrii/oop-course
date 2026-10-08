@@ -1,4 +1,7 @@
 ﻿using ClinicApp;
+using ClinicApp.Enums;
+using ClinicApp.Managers;
+using ClinicApp.Models;
 
 Console.OutputEncoding = System.Text.Encoding.UTF8;
 
