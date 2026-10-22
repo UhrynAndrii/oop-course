@@ -1,4 +1,5 @@
 ﻿using ClinicApp.Models;
+using ClinicApp.Interfaces;
 
 namespace ClinicApp.Managers;
 
@@ -35,6 +36,21 @@ public class AppointmentManager
     {
         _patients = patients;
         _doctors = doctors;
+    }
+
+    public static int CancelAll(ICancellable[] items, string reason = "")
+    {
+        int cancelledCount = 0;
+
+        for (int i = 0; i < items.Length; i++)
+        {
+            if (items[i].Cancel(reason))
+            {
+                cancelledCount++;
+            }
+        }
+
+        return cancelledCount;
     }
 
     public bool Book(
@@ -105,6 +121,20 @@ public class AppointmentManager
 
         return appointment.Complete();
     }
+
+
+    public Appointment[] GetAll()
+    {
+        Appointment[] result = new Appointment[_count];
+
+        for (int i = 0; i < _count; i++)
+        {
+            result[i] = _appointments[i];
+        }
+
+        return result;
+    }
+
 
     public Appointment[] GetByPatient(int patientId)
     {
