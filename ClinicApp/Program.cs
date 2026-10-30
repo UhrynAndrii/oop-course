@@ -151,17 +151,42 @@ clinic.Appointments.Book(
     doctor1.Id,
     new DateTime(2026, 9, 26, 10, 0, 0));
 
-clinic.Appointments.Book(
+clinic.Appointments.BookUrgent(
     patient2.Id,
     doctor2.Id,
     new DateTime(2026, 9, 26, 11, 0, 0),
+    "терміновий огляд",
     45);
 
-clinic.Appointments.Book(
+clinic.Appointments.BookSpecialist(
     patient3.Id,
     doctor3.Id,
     new DateTime(2026, 9, 27, 9, 0, 0),
+    "кардіологія",
     20);
+
+UrgentAppointment urgentAppointment = new UrgentAppointment(
+    patient1.Id,
+    doctor1.Id,
+    new DateTime(2026, 9, 27, 10, 0, 0),
+    "тест");
+
+Appointment appointmentReference = urgentAppointment;
+UrgentAppointment urgentReference = urgentAppointment;
+
+// GetDescription() є virtual/override, тому виконується реалізація UrgentAppointment.
+// GetPriority() прихований через new, тому вибір методу залежить від типу змінної.
+// Щоб GetPriority() був поліморфним, у Appointment потрібно зробити його virtual,
+// а в UrgentAppointment замінити new на override.
+
+Console.WriteLine();
+Console.WriteLine("== new vs override ==");
+Console.WriteLine(
+    $"Через Appointment:       {appointmentReference.GetDescription()} | " +
+    $"пріоритет {appointmentReference.GetPriority()}");
+Console.WriteLine(
+    $"Через UrgentAppointment: {urgentReference.GetDescription()} | " +
+    $"пріоритет {urgentReference.GetPriority()}");
 
 void PatientsMenu(Clinic clinic)
 {
