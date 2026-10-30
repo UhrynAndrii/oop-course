@@ -575,8 +575,9 @@ void AppointmentsMenu(Clinic clinic)
         Console.WriteLine("6. Скасувати запис");
         Console.WriteLine("7. Завершити запис");
         Console.WriteLine("8. Скасувати всі записи пацієнта");
-        Console.WriteLine("9. Розклад на дату");
-        Console.WriteLine("10. Згенерувати звіт");
+        Console.WriteLine("9. За типом прийому");
+        Console.WriteLine("10. Розклад на дату");
+        Console.WriteLine("11. Згенерувати звіт");
         Console.WriteLine("0. Назад");
         Console.Write("Ваш вибір: ");
 
@@ -820,7 +821,43 @@ void AppointmentsMenu(Clinic clinic)
 
             Console.WriteLine($"Скасовано записів: {cancelledCount}");
         }
+
         else if (choice == "9")
+        {
+            Console.WriteLine("1. Термінові");
+            Console.WriteLine("2. Консультації спеціаліста");
+            Console.WriteLine("3. Звичайні");
+            Console.Write("Оберіть тип прийому: ");
+
+            string typeChoice = Console.ReadLine()!;
+
+            Appointment[] appointments;
+
+            if (typeChoice == "1")
+            {
+                appointments = clinic.Appointments.GetUrgent();
+                Console.WriteLine("Термінові записи:");
+            }
+            else if (typeChoice == "2")
+            {
+                appointments = clinic.Appointments.GetSpecialist();
+                Console.WriteLine("Консультації спеціаліста:");
+            }
+            else if (typeChoice == "3")
+            {
+                appointments = clinic.Appointments.GetRegular();
+                Console.WriteLine("Звичайні записи:");
+            }
+            else
+            {
+                Console.WriteLine("Невірний вибір.");
+                continue;
+            }
+
+            clinic.Appointments.DisplayList(appointments);
+        }
+
+        else if (choice == "10")
         {
             Console.Write("Введіть дату (рррр-мм-дд): ");
 
@@ -835,7 +872,8 @@ void AppointmentsMenu(Clinic clinic)
                 Console.WriteLine("Некоректна дата.");
             }
         }
-        else if (choice == "10")
+
+        else if (choice == "11")
         {
             clinic.GenerateReport();
         }

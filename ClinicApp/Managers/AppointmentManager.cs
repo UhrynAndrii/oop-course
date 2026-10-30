@@ -177,6 +177,88 @@ public class AppointmentManager
     }
 
 
+    public Appointment[] GetUrgent()
+    {
+        int foundCount = 0;
+
+        for (int i = 0; i < _count; i++)
+        {
+            if (_appointments[i] is UrgentAppointment)
+            {
+                foundCount++;
+            }
+        }
+
+        Appointment[] result = new Appointment[foundCount];
+        int resultIndex = 0;
+
+        for (int i = 0; i < _count; i++)
+        {
+            if (_appointments[i] is UrgentAppointment)
+            {
+                result[resultIndex] = _appointments[i];
+                resultIndex++;
+            }
+        }
+
+        return result;
+    }
+
+    public Appointment[] GetSpecialist()
+    {
+        int foundCount = 0;
+
+        for (int i = 0; i < _count; i++)
+        {
+            if (_appointments[i] is SpecialistAppointment)
+            {
+                foundCount++;
+            }
+        }
+
+        Appointment[] result = new Appointment[foundCount];
+        int resultIndex = 0;
+
+        for (int i = 0; i < _count; i++)
+        {
+            if (_appointments[i] is SpecialistAppointment)
+            {
+                result[resultIndex] = _appointments[i];
+                resultIndex++;
+            }
+        }
+
+        return result;
+    }
+
+    public Appointment[] GetRegular()
+    {
+        int foundCount = 0;
+
+        for (int i = 0; i < _count; i++)
+        {
+            if (_appointments[i] is RegularAppointment)
+            {
+                foundCount++;
+            }
+        }
+
+        Appointment[] result = new Appointment[foundCount];
+        int resultIndex = 0;
+
+        for (int i = 0; i < _count; i++)
+        {
+            if (_appointments[i] is RegularAppointment)
+            {
+                result[resultIndex] = _appointments[i];
+                resultIndex++;
+            }
+        }
+
+        return result;
+    }
+
+
     public Appointment[] GetByPatient(int patientId)
     {
         int foundCount = 0;
@@ -318,14 +400,11 @@ public class AppointmentManager
         }
 
         string result =
-            $"[{appointment.Id}] {patientName} → {doctorName} | " +
+            $"[{appointment.Id}] {appointment.GetDescription()} | " +
+            $"{patientName} → {doctorName} | " +
             $"{appointment.ScheduledAt:dd.MM.yyyy HH:mm}–" +
-            $"{appointment.EndsAt:HH:mm} | {appointment.Status}";
-
-        if (appointment.Notes.Length > 0)
-        {
-            result += $" | {appointment.Notes}";
-        }
+            $"{appointment.EndsAt:HH:mm} | {appointment.Status} | " +
+            $"{appointment.GetCost():F2} грн";
 
         Console.WriteLine(result);
     }
