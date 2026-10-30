@@ -9,8 +9,9 @@ public sealed class SpecialistAppointment : Appointment
         int doctorId,
         DateTime scheduledAt,
         string topic = "",
-        int durationMinutes = 45)
-        : base(patientId, doctorId, scheduledAt, durationMinutes)
+        int durationMinutes = 45,
+        decimal discountMultiplier = 1m)
+        : base(patientId, doctorId, scheduledAt, durationMinutes, discountMultiplier)
     {
         ConsultationTopic = topic;
     }

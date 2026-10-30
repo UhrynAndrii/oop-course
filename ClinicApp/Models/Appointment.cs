@@ -10,6 +10,10 @@ public class Appointment : IPayable, ICancellable
 
     private int _durationMinutes;
     private bool _isPaid;
+
+    // Варіант А: знижка зберігається в базовому класі,
+    // тому автоматично застосовується до всіх типів прийомів.
+    private readonly decimal _discountMultiplier;
     public int Id { get; }
     public int PatientId { get; }
     public int DoctorId { get; }
@@ -29,6 +33,11 @@ public class Appointment : IPayable, ICancellable
     public bool IsPaid
     {
         get { return _isPaid; }
+    }
+
+    public decimal DiscountMultiplier
+    {
+        get { return _discountMultiplier; }
     }
 
     public string Notes { get; private set; }
@@ -57,7 +66,8 @@ public class Appointment : IPayable, ICancellable
         int patientId,
         int doctorId,
         DateTime scheduledAt,
-        int durationMinutes = 30)
+        int durationMinutes = 30,
+        decimal discountMultiplier = 1m)
     {
         PatientId = patientId;
         DoctorId = doctorId;
@@ -66,12 +76,14 @@ public class Appointment : IPayable, ICancellable
         Status = AppointmentStatus.Scheduled;
         Notes = "";
 
+        _discountMultiplier = discountMultiplier;
+
         Id = _nextId++;
     }
 
     public virtual decimal GetCost()
     {
-        return DurationMinutes * 10m;
+        return DurationMinutes * 10m * _discountMultiplier;
     }
 
     public virtual string GetDescription()

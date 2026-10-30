@@ -9,8 +9,9 @@ public class UrgentAppointment : Appointment
         int doctorId,
         DateTime scheduledAt,
         string urgencyNote = "",
-        int durationMinutes = 30)
-        : base(patientId, doctorId, scheduledAt, durationMinutes)
+        int durationMinutes = 30,
+        decimal discountMultiplier = 1m)
+        : base(patientId, doctorId, scheduledAt, durationMinutes, discountMultiplier)
     {
         UrgencyNote = urgencyNote;
     }

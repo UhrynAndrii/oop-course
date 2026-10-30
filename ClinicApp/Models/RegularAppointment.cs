@@ -6,8 +6,9 @@ public class RegularAppointment : Appointment
         int patientId,
         int doctorId,
         DateTime scheduledAt,
-        int durationMinutes = 30)
-        : base(patientId, doctorId, scheduledAt, durationMinutes)
+        int durationMinutes = 30,
+        decimal discountMultiplier = 1m)
+        : base(patientId, doctorId, scheduledAt, durationMinutes, discountMultiplier)
     {
     }
 
