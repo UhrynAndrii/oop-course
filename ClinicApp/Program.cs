@@ -151,17 +151,42 @@ clinic.Appointments.Book(
     doctor1.Id,
     new DateTime(2026, 9, 26, 10, 0, 0));
 
-clinic.Appointments.Book(
+clinic.Appointments.BookUrgent(
     patient2.Id,
     doctor2.Id,
     new DateTime(2026, 9, 26, 11, 0, 0),
+    "терміновий огляд",
     45);
 
-clinic.Appointments.Book(
+clinic.Appointments.BookSpecialist(
     patient3.Id,
     doctor3.Id,
     new DateTime(2026, 9, 27, 9, 0, 0),
+    "кардіологія",
     20);
+
+UrgentAppointment urgentAppointment = new UrgentAppointment(
+    patient1.Id,
+    doctor1.Id,
+    new DateTime(2026, 9, 27, 10, 0, 0),
+    "тест");
+
+Appointment appointmentReference = urgentAppointment;
+UrgentAppointment urgentReference = urgentAppointment;
+
+// GetDescription() є virtual/override, тому виконується реалізація UrgentAppointment.
+// GetPriority() прихований через new, тому вибір методу залежить від типу змінної.
+// Щоб GetPriority() був поліморфним, у Appointment потрібно зробити його virtual,
+// а в UrgentAppointment замінити new на override.
+
+Console.WriteLine();
+Console.WriteLine("== new vs override ==");
+Console.WriteLine(
+    $"Через Appointment:       {appointmentReference.GetDescription()} | " +
+    $"пріоритет {appointmentReference.GetPriority()}");
+Console.WriteLine(
+    $"Через UrgentAppointment: {urgentReference.GetDescription()} | " +
+    $"пріоритет {urgentReference.GetPriority()}");
 
 void PatientsMenu(Clinic clinic)
 {
@@ -550,8 +575,9 @@ void AppointmentsMenu(Clinic clinic)
         Console.WriteLine("6. Скасувати запис");
         Console.WriteLine("7. Завершити запис");
         Console.WriteLine("8. Скасувати всі записи пацієнта");
-        Console.WriteLine("9. Розклад на дату");
-        Console.WriteLine("10. Згенерувати звіт");
+        Console.WriteLine("9. За типом прийому");
+        Console.WriteLine("10. Розклад на дату");
+        Console.WriteLine("11. Згенерувати звіт");
         Console.WriteLine("0. Назад");
         Console.Write("Ваш вибір: ");
 
@@ -795,7 +821,43 @@ void AppointmentsMenu(Clinic clinic)
 
             Console.WriteLine($"Скасовано записів: {cancelledCount}");
         }
+
         else if (choice == "9")
+        {
+            Console.WriteLine("1. Термінові");
+            Console.WriteLine("2. Консультації спеціаліста");
+            Console.WriteLine("3. Звичайні");
+            Console.Write("Оберіть тип прийому: ");
+
+            string typeChoice = Console.ReadLine()!;
+
+            Appointment[] appointments;
+
+            if (typeChoice == "1")
+            {
+                appointments = clinic.Appointments.GetUrgent();
+                Console.WriteLine("Термінові записи:");
+            }
+            else if (typeChoice == "2")
+            {
+                appointments = clinic.Appointments.GetSpecialist();
+                Console.WriteLine("Консультації спеціаліста:");
+            }
+            else if (typeChoice == "3")
+            {
+                appointments = clinic.Appointments.GetRegular();
+                Console.WriteLine("Звичайні записи:");
+            }
+            else
+            {
+                Console.WriteLine("Невірний вибір.");
+                continue;
+            }
+
+            clinic.Appointments.DisplayList(appointments);
+        }
+
+        else if (choice == "10")
         {
             Console.Write("Введіть дату (рррр-мм-дд): ");
 
@@ -810,7 +872,8 @@ void AppointmentsMenu(Clinic clinic)
                 Console.WriteLine("Некоректна дата.");
             }
         }
-        else if (choice == "10")
+
+        else if (choice == "11")
         {
             clinic.GenerateReport();
         }
