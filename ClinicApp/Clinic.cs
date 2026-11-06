@@ -17,12 +17,15 @@ public class Clinic
 
     public BillingManager Billing { get; }
 
+    public WaitingQueue<Patient> WaitingRoom { get; }
+
     public Clinic(string name)
     {
         Name = name;
 
         Patients = new PatientManager();
         Doctors = new DoctorManager();
+        WaitingRoom = new WaitingQueue<Patient>();
 
         Appointments = new AppointmentManager(
             Patients,
