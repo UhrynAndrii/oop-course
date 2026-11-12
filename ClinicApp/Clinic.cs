@@ -21,6 +21,8 @@ public class Clinic
 
     public WaitingQueue<Patient> WaitingRoom { get; }
 
+    public TreatmentPlanManager TreatmentPlans { get; }
+
     public Clinic(string name)
     {
         Name = name;
@@ -41,6 +43,8 @@ public class Clinic
             Patients);
 
         MedicalRecords = new MedicalRecordManager();
+
+        TreatmentPlans = new TreatmentPlanManager();
     }
 
     public void DisplaySchedule(DateTime date)
