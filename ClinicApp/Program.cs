@@ -191,6 +191,20 @@ Console.WriteLine(
     $"Через UrgentAppointment: {urgentReference.GetDescription()} | " +
     $"пріоритет {urgentReference.GetPriority()}");
 
+if (clinic.Session.Exists())
+{
+    Console.Write("Знайдено збережену сесію. Завантажити? (y/n): ");
+    string loadChoice = Console.ReadLine()!;
+
+    if (loadChoice == "y" || loadChoice == "Y")
+    {
+        int loadedCount = clinic.Session.Load(clinic);
+
+        Console.WriteLine(
+            $"Завантажено пацієнтів: {loadedCount}");
+    }
+}
+
 void PatientsMenu(Clinic clinic)
 {
     while (true)
@@ -1889,6 +1903,15 @@ while (true)
     }
     else if (choice == "0")
     {
+        Console.Write("Зберегти сесію? (y/n): ");
+        string saveChoice = Console.ReadLine()!;
+
+        if (saveChoice == "y" || saveChoice == "Y")
+        {
+            clinic.Session.Save(clinic);
+            Console.WriteLine("Сесію збережено.");
+        }
+
         break;
     }
     else

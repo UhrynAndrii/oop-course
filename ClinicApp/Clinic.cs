@@ -27,12 +27,14 @@ public class Clinic
     public ClinicLogger Logger { get; }
 
     public ClinicExporter Exporter { get; }
+    public SessionManager Session { get; }
 
     public Clinic(string name)
     {
         Name = name;
 
         Logger = new ClinicLogger();
+        Session = new SessionManager();
 
         Patients = new PatientManager();
         Doctors = new DoctorManager();
