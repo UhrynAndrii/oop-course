@@ -26,6 +26,8 @@ public class Clinic
 
     public ClinicLogger Logger { get; }
 
+    public ClinicExporter Exporter { get; }
+
     public Clinic(string name)
     {
         Name = name;
@@ -50,6 +52,8 @@ public class Clinic
         MedicalRecords = new MedicalRecordManager();
 
         TreatmentPlans = new TreatmentPlanManager();
+
+        Exporter = new ClinicExporter(this);
     }
 
     public void DisplaySchedule(DateTime date)

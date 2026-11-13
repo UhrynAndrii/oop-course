@@ -1556,6 +1556,7 @@ void FilesMenu(Clinic clinic)
         Console.WriteLine("── Файли ─────────────────────");
         Console.WriteLine("1. Останні рядки лога");
         Console.WriteLine("2. Очистити лог");
+        Console.WriteLine("3. Експортувати всі звіти");
         Console.WriteLine("0. Назад");
         Console.Write("Оберіть: ");
 
@@ -1594,6 +1595,17 @@ void FilesMenu(Clinic clinic)
             clinic.Logger.Clear();
 
             Console.WriteLine("Лог очищено.");
+        }
+        else if (choice == "3")
+        {
+            string[] paths = clinic.Exporter.ExportAll();
+
+            Console.WriteLine("Звіти успішно експортовано:");
+
+            for (int i = 0; i < paths.Length; i++)
+            {
+                Console.WriteLine(paths[i]);
+            }
         }
         else if (choice == "0")
         {
