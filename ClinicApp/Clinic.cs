@@ -1,5 +1,6 @@
 ﻿using ClinicApp.Managers;
 using ClinicApp.Models;
+using ClinicApp.Utils;
 
 namespace ClinicApp;
 
@@ -23,9 +24,13 @@ public class Clinic
 
     public TreatmentPlanManager TreatmentPlans { get; }
 
+    public ClinicLogger Logger { get; }
+
     public Clinic(string name)
     {
         Name = name;
+
+        Logger = new ClinicLogger();
 
         Patients = new PatientManager();
         Doctors = new DoctorManager();
