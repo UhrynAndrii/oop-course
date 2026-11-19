@@ -280,9 +280,6 @@ void PatientsMenu(Clinic clinic)
 
                 clinic.Patients.Add(patient);
 
-                clinic.Logger.LogInfo(
-                    $"Додано пацієнта #{patient.Id}: {patient.FullName}");
-
                 Console.WriteLine("Пацієнта додано.");
             }
             catch (ArgumentOutOfRangeException e)
@@ -706,10 +703,6 @@ void AppointmentsMenu(Clinic clinic)
                     scheduledAt,
                     durationMinutes);
 
-                clinic.Logger.LogInfo(
-                    $"Створено запис: пацієнт #{patientId} → лікар #{doctorId}, " +
-                    $"дата {scheduledAt:dd.MM.yyyy HH:mm}");
-
                 Console.WriteLine("Запис створено.");
             }
             catch (ArgumentOutOfRangeException e)
@@ -812,9 +805,6 @@ void AppointmentsMenu(Clinic clinic)
 
             if (clinic.Appointments.Cancel(id, reason))
             {
-                clinic.Logger.LogInfo(
-                    $"Запис #{id} скасовано. Причина: {reason}");
-
                 Console.WriteLine(
                     $"Запис [{id}] скасовано.");
             }
@@ -840,9 +830,6 @@ void AppointmentsMenu(Clinic clinic)
 
             if (clinic.Appointments.Complete(id))
             {
-                clinic.Logger.LogInfo(
-                    $"Запис #{id} завершено.");
-
                 Console.WriteLine(
                     $"Запис [{id}] завершено.");
             }
@@ -870,16 +857,9 @@ void AppointmentsMenu(Clinic clinic)
             Appointment[] patientAppointments =
                 clinic.Appointments.GetByPatient(patientId);
 
-            int cancelledCount = AppointmentManager.CancelAll(
+            int cancelledCount = clinic.Appointments.CancelAll(
                 patientAppointments,
                 reason);
-
-            if (cancelledCount > 0)
-            {
-                clinic.Logger.LogInfo(
-                    $"Масово скасовано записів пацієнта #{patientId}: " +
-                    $"{cancelledCount}. Причина: {reason}");
-            }
 
             Console.WriteLine($"Скасовано записів: {cancelledCount}");
         }
@@ -1518,20 +1498,15 @@ void TreatmentPlansMenu(Clinic clinic)
                 continue;
             }
 
-            TreatmentPlan? plan =
-                clinic.TreatmentPlans.GetById(planId);
-
-            if (plan == null)
-            {
-                Console.WriteLine("План не знайдено.");
-            }
-            else if (plan.Complete())
+            if (clinic.TreatmentPlans.Complete(planId))
             {
                 Console.WriteLine("План успішно завершено.");
             }
             else
             {
-                Console.WriteLine("Неможливо завершити цей план.");
+                Console.WriteLine(
+                    "Не вдалося завершити план. " +
+                    "Можливо, його не знайдено або він неактивний.");
             }
         }
         else if (choice == "6")
@@ -1719,9 +1694,6 @@ void BillingMenu(Clinic clinic)
 
             if (clinic.Billing.PayAppointment(appointmentId))
             {
-                clinic.Logger.LogInfo(
-                    $"Запис #{appointmentId} оплачено.");
-
                 Console.WriteLine($"Запис [{appointmentId}] оплачено.");
             }
             else

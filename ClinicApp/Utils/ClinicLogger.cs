@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using ClinicApp.Events;
 
 namespace ClinicApp.Utils
 {
@@ -34,6 +35,64 @@ namespace ClinicApp.Utils
                 "] [" + level.PadRight(5) + "] " + message;
 
             File.AppendAllText(_logPath, logEntry + Environment.NewLine, Encoding.UTF8);
+        }
+
+        public void OnPatientAdded(object? sender, PatientEventArgs e)
+        {
+            LogInfo($"Новий пацієнт #{e.PatientId}: {e.FullName}");
+        }
+
+        public void OnAppointmentBooked(object? sender, AppointmentEventArgs e)
+        {
+            LogInfo(
+                $"Запис #{e.AppointmentId} створено: " +
+                $"пацієнт #{e.PatientId} → лікар #{e.DoctorId}");
+        }
+
+        public void OnAppointmentCancelled(object? sender, AppointmentEventArgs e)
+        {
+            LogInfo(
+                $"Запис #{e.AppointmentId} скасовано. Причина: {e.Notes}");
+        }
+
+        public void OnAppointmentCompleted(object? sender, AppointmentEventArgs e)
+        {
+            LogInfo($"Запис #{e.AppointmentId} завершено.");
+        }
+
+        public void OnUrgentAppointmentBooked(object? sender, AppointmentEventArgs e)
+        {
+            string message =
+                $"ТЕРМІНОВИЙ запис #{e.AppointmentId}: {e.Notes}";
+
+            LogWarning(message);
+
+            Directory.CreateDirectory("alerts");
+
+            string alertPath = "alerts/urgent_" +
+                DateTime.Now.ToString("yyyy-MM-dd") + ".txt";
+
+            string alertEntry =
+                "[" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") +
+                "] " + message;
+
+            File.AppendAllText(
+                alertPath,
+                alertEntry + Environment.NewLine,
+                Encoding.UTF8);
+        }
+
+        public void OnPaymentReceived(object? sender, PaymentEventArgs e)
+        {
+            LogInfo(
+                $"Оплата запису #{e.AppointmentId}: {e.Amount:F2} грн");
+        }
+
+        public void OnPlanCompleted(object? sender, TreatmentPlanEventArgs e)
+        {
+            LogInfo(
+                $"План лікування #{e.PlanId} завершено: " +
+                $"пацієнт #{e.PatientId}, діагноз: {e.Diagnosis}");
         }
 
         public string[] GetLastLines(int n)
