@@ -9,12 +9,15 @@ using System.Threading;
 using ClinicApp.Comparators;
 using System.Collections.Generic;
 using ClinicApp.Utils;
+using ClinicApp.Events;
 
 Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
 Console.OutputEncoding = System.Text.Encoding.UTF8;
 
 Clinic clinic = new Clinic("Медична Клініка");
+
+clinic.Appointments.AppointmentBooked += OnAppointmentBookedConsole;
 
 Patient patient1 = new Patient(
     "Андрій",
@@ -203,6 +206,16 @@ if (clinic.Session.Exists())
         Console.WriteLine(
             $"Завантажено пацієнтів: {loadedCount}");
     }
+}
+
+static void OnAppointmentBookedConsole(
+    object? sender,
+    AppointmentEventArgs e)
+{
+    Console.WriteLine(
+        $"[EVENT] Запис #{e.AppointmentId} створено: " +
+        $"пацієнт #{e.PatientId} → лікар #{e.DoctorId}, " +
+        $"{e.ScheduledAt:dd.MM.yyyy HH:mm}");
 }
 
 void PatientsMenu(Clinic clinic)

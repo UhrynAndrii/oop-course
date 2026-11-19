@@ -1,10 +1,13 @@
 ﻿using ClinicApp.Models;
 using ClinicApp.Interfaces;
+using ClinicApp.Events;
 
 namespace ClinicApp.Managers;
 
 public class AppointmentManager
 {
+    public event EventHandler<AppointmentEventArgs>? AppointmentBooked;
+
     private const int MaxAppointments = 500;
     private Appointment[] _appointments = new Appointment[MaxAppointments];
     private int _count;
@@ -130,6 +133,12 @@ public class AppointmentManager
 
         _appointments[_count] = appointment;
         _count++;
+
+        AppointmentBooked?.Invoke(this, new AppointmentEventArgs(
+            appointment.Id,
+            appointment.PatientId,
+            appointment.DoctorId,
+            appointment.ScheduledAt));
 
         Console.WriteLine(
             $"Запис [{appointment.Id}] створено: " +
