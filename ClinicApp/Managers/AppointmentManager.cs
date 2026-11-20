@@ -1,10 +1,16 @@
 ﻿using ClinicApp.Models;
 using ClinicApp.Interfaces;
+using ClinicApp.Events;
 
 namespace ClinicApp.Managers;
 
 public class AppointmentManager
 {
+    public event EventHandler<AppointmentEventArgs>? AppointmentBooked;
+    public event EventHandler<AppointmentEventArgs>? AppointmentCancelled;
+    public event EventHandler<AppointmentEventArgs>? AppointmentCompleted;
+    public event EventHandler<AppointmentEventArgs>? UrgentAppointmentBooked;
+
     private const int MaxAppointments = 500;
     private Appointment[] _appointments = new Appointment[MaxAppointments];
     private int _count;
@@ -38,7 +44,7 @@ public class AppointmentManager
         _doctors = doctors;
     }
 
-    public static int CancelAll(ICancellable[] items, string reason = "")
+    public int CancelAll(ICancellable[] items, string reason = "")
     {
         int cancelledCount = 0;
 
@@ -47,6 +53,16 @@ public class AppointmentManager
             if (items[i].Cancel(reason))
             {
                 cancelledCount++;
+
+                if (items[i] is Appointment appointment)
+                {
+                    AppointmentCancelled?.Invoke(this, new AppointmentEventArgs(
+                        appointment.Id,
+                        appointment.PatientId,
+                        appointment.DoctorId,
+                        appointment.ScheduledAt,
+                        appointment.CancellationReason));
+                }
             }
         }
 
@@ -69,20 +85,32 @@ public class AppointmentManager
     }
 
     public bool BookUrgent(
-        int patientId,
-        int doctorId,
-        DateTime scheduledAt,
-        string urgencyNote = "",
-        int durationMinutes = 30)
+    int patientId,
+    int doctorId,
+    DateTime scheduledAt,
+    string urgencyNote = "",
+    int durationMinutes = 30)
     {
-        Appointment appointment = new UrgentAppointment(
+        UrgentAppointment appointment = new UrgentAppointment(
             patientId,
             doctorId,
             scheduledAt,
             urgencyNote,
             durationMinutes);
 
-        return AddAppointment(appointment);
+        if (!AddAppointment(appointment))
+        {
+            return false;
+        }
+
+        UrgentAppointmentBooked?.Invoke(this, new AppointmentEventArgs(
+            appointment.Id,
+            appointment.PatientId,
+            appointment.DoctorId,
+            appointment.ScheduledAt,
+            appointment.UrgencyNote));
+
+        return true;
     }
 
     public bool BookSpecialist(
@@ -131,6 +159,12 @@ public class AppointmentManager
         _appointments[_count] = appointment;
         _count++;
 
+        AppointmentBooked?.Invoke(this, new AppointmentEventArgs(
+            appointment.Id,
+            appointment.PatientId,
+            appointment.DoctorId,
+            appointment.ScheduledAt));
+
         Console.WriteLine(
             $"Запис [{appointment.Id}] створено: " +
             $"{patient.FullName} → {doctor.FullName} " +
@@ -148,7 +182,19 @@ public class AppointmentManager
             return false;
         }
 
-        return appointment.Cancel(reason);
+        if (!appointment.Cancel(reason))
+        {
+            return false;
+        }
+
+        AppointmentCancelled?.Invoke(this, new AppointmentEventArgs(
+            appointment.Id,
+            appointment.PatientId,
+            appointment.DoctorId,
+            appointment.ScheduledAt,
+            appointment.CancellationReason));
+
+        return true;
     }
 
     public bool Complete(int id)
@@ -160,9 +206,19 @@ public class AppointmentManager
             return false;
         }
 
-        return appointment.Complete();
-    }
+        if (!appointment.Complete())
+        {
+            return false;
+        }
 
+        AppointmentCompleted?.Invoke(this, new AppointmentEventArgs(
+            appointment.Id,
+            appointment.PatientId,
+            appointment.DoctorId,
+            appointment.ScheduledAt));
+
+        return true;
+    }
 
     public Appointment[] GetAll()
     {

@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using ClinicApp.Enums;
+using ClinicApp.Events;
 using ClinicApp.Models;
 using ClinicApp.Utils;
 
@@ -7,6 +9,8 @@ namespace ClinicApp.Managers
 {
     public class TreatmentPlanManager
     {
+        public event EventHandler<TreatmentPlanEventArgs>? PlanCompleted;
+
         private readonly List<TreatmentPlan> _plans =
             new List<TreatmentPlan>();
 
@@ -70,6 +74,28 @@ namespace ClinicApp.Managers
         public TreatmentPlan[] GetAll()
         {
             return _plans.ToArray();
+        }
+
+        public bool Complete(int planId)
+        {
+            TreatmentPlan? plan = GetById(planId);
+
+            if (plan == null)
+            {
+                return false;
+            }
+
+            if (!plan.Complete())
+            {
+                return false;
+            }
+
+            PlanCompleted?.Invoke(this, new TreatmentPlanEventArgs(
+                plan.Id,
+                plan.PatientId,
+                plan.Diagnosis));
+
+            return true;
         }
     }
 }
