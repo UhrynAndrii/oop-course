@@ -1888,6 +1888,9 @@ while (true)
     }
     else if (choice == "0")
     {
+        clinic.Tracker.PrintSummary();
+        clinic.Tracker.SaveSummary();
+
         Console.Write("Зберегти сесію? (y/n): ");
         string saveChoice = Console.ReadLine()!;
 
