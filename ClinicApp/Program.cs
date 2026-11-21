@@ -1719,6 +1719,115 @@ void BillingMenu(Clinic clinic)
         }
     }
 }
+
+void ReportsMenu(Clinic clinic)
+{
+    while (true)
+    {
+        Console.WriteLine();
+        Console.WriteLine("── Звіти ───────────────────────");
+        Console.WriteLine("1. Спеціальності");
+        Console.WriteLine("2. Найзавантаженіший лікар");
+        Console.WriteLine("3. Пацієнти з кількома візитами");
+        Console.WriteLine("4. Топ-3 лікарів за виручкою");
+        Console.WriteLine("5. Чи є термінові записи");
+        Console.WriteLine("6. Активні спеціальності");
+        Console.WriteLine("7. Виручка по місяцях");
+        Console.WriteLine("0. Назад");
+        Console.Write("Оберіть: ");
+
+        string choice = Console.ReadLine()!;
+
+        Console.WriteLine();
+
+        if (choice == "1")
+        {
+            foreach (SpecialityReport report in clinic.Reports.GetSpecialityStats())
+            {
+                Console.WriteLine(report);
+            }
+        }
+        else if (choice == "2")
+        {
+            string? doctorName = clinic.Reports.FindBusiestDoctorName();
+
+            if (doctorName == null)
+            {
+                Console.WriteLine("Немає лікарів.");
+            }
+            else
+            {
+                Console.WriteLine(
+                    $"Найзавантаженіший лікар: {doctorName}");
+            }
+        }
+        else if (choice == "3")
+        {
+            Console.Write("Мінімальна кількість візитів: ");
+
+            if (!int.TryParse(Console.ReadLine(), out int minVisits) ||
+                minVisits <= 0)
+            {
+                Console.WriteLine(
+                    "Введіть додатне ціле число.");
+                continue;
+            }
+
+            IEnumerable<string> patients =
+                clinic.Reports.GetPatientsWithMultipleVisits(minVisits);
+
+            foreach (string patientName in patients)
+            {
+                Console.WriteLine(patientName);
+            }
+        }
+        else if (choice == "4")
+        {
+            int number = 1;
+
+            foreach (DoctorStats stat in clinic.Reports.GetTopEarners(3))
+            {
+                Console.WriteLine(
+                    $"{number}. {stat.FullName} — {stat.TotalRevenue:F2} грн");
+
+                number++;
+            }
+        }
+        else if (choice == "5")
+        {
+            bool hasUrgentAppointments =
+                clinic.Reports.HasAnyUrgentAppointments();
+
+            Console.WriteLine(
+                hasUrgentAppointments ? "Так" : "Ні");
+        }
+        else if (choice == "6")
+        {
+            foreach (Speciality speciality in clinic.Reports.GetActiveSpecialities())
+            {
+                Console.WriteLine(
+                    ClinicFormatter.FormatSpeciality(speciality));
+            }
+        }
+        else if (choice == "7")
+        {
+            foreach (var item in clinic.Reports.GetMonthlyRevenue())
+            {
+                Console.WriteLine(
+                    $"{item.Year}/{item.Month:D2} — {item.Total:F2} грн");
+            }
+        }
+        else if (choice == "0")
+        {
+            break;
+        }
+        else
+        {
+            Console.WriteLine("Невірний вибір.");
+        }
+    }
+}
+
 List<DoctorStats> CollectDoctorStats(Clinic clinic)
 {
     List<DoctorStats> stats = new List<DoctorStats>();
@@ -1838,6 +1947,7 @@ while (true)
     Console.WriteLine("║  8. Аналітика      — статистика лікарів і пацієнтів ║");
     Console.WriteLine("║  9. Плани лікування — рефлексія, атрибути      ║");
     Console.WriteLine("║ 10. Файли          — журнал дій                ║");
+    Console.WriteLine("║ 11. Звіти          — аналітичні звіти          ║");
     Console.WriteLine("║  0. Вийти                                      ║");
     Console.WriteLine("╚════════════════════════════════════════════════╝");
     Console.Write("Оберіть: ");
@@ -1885,6 +1995,10 @@ while (true)
     else if (choice == "10")
     {
         FilesMenu(clinic);
+    }
+    else if (choice == "11")
+    {
+        ReportsMenu(clinic);
     }
     else if (choice == "0")
     {
