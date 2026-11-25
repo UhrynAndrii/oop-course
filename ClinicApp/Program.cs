@@ -10,6 +10,8 @@ using ClinicApp.Comparators;
 using System.Collections.Generic;
 using ClinicApp.Utils;
 using ClinicApp.Events;
+using ClinicApp.Extensions;
+using System.Linq;
 
 Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
@@ -1828,6 +1830,214 @@ void ReportsMenu(Clinic clinic)
     }
 }
 
+void FunctionalMenu(Clinic clinic)
+{
+    while (true)
+    {
+        Console.WriteLine();
+        Console.WriteLine("=== Функціональні фільтри ===");
+        Console.WriteLine("1. Несплачені записи та загальна сума");
+        Console.WriteLine("2. Майбутні записи дорожче заданої суми");
+        Console.WriteLine("3. Дорослі пацієнти");
+        Console.WriteLine("4. Лікарі з призначеними записами");
+        Console.WriteLine("5. Термінові І майбутні записи");
+        Console.WriteLine("6. Термінові АБО прострочені записи");
+        Console.WriteLine("7. Обробка записів двома діями");
+        Console.WriteLine("8. Повний pipeline");
+        Console.WriteLine("0. Назад");
+        Console.Write("Ваш вибір: ");
+
+        string choice = Console.ReadLine()!;
+
+        Console.WriteLine();
+
+        Appointment[] appointments = clinic.Appointments.GetAll();
+
+        if (choice == "1")
+        {
+            Appointment[] unpaidAppointments =
+                appointments.Unpaid().ToArray();
+
+            if (unpaidAppointments.Length == 0)
+            {
+                Console.WriteLine("Несплачених записів немає.");
+            }
+            else
+            {
+                Console.WriteLine("=== Несплачені записи ===");
+
+                foreach (Appointment appointment in unpaidAppointments)
+                {
+                    clinic.Appointments.DisplayAppointment(appointment);
+                }
+            }
+
+            Console.WriteLine(
+                $"Загальна сума: {unpaidAppointments.TotalCost():F2} грн");
+        }
+        else if (choice == "2")
+        {
+            Console.Write("Мінімальна вартість: ");
+
+            if (!decimal.TryParse(
+                    Console.ReadLine(),
+                    out decimal minCost))
+            {
+                Console.WriteLine("Некоректна сума.");
+                continue;
+            }
+
+            IEnumerable<Appointment> results =
+                appointments.Upcoming().CostAbove(minCost);
+
+            bool found = false;
+
+            foreach (Appointment appointment in results)
+            {
+                clinic.Appointments.DisplayAppointment(appointment);
+                found = true;
+            }
+
+            if (!found)
+            {
+                Console.WriteLine("Відповідних записів не знайдено.");
+            }
+        }
+        else if (choice == "3")
+        {
+            Patient[] patients = new Patient[clinic.Patients.Count];
+
+            for (int i = 0; i < patients.Length; i++)
+            {
+                patients[i] = clinic.Patients[i]!;
+            }
+
+            Patient[] adults = patients.Adults().ToArray();
+
+            if (adults.Length == 0)
+            {
+                Console.WriteLine("Дорослих пацієнтів не знайдено.");
+            }
+            else
+            {
+                Console.WriteLine("=== Дорослі пацієнти ===");
+
+                foreach (Patient patient in adults)
+                {
+                    Console.WriteLine(patient);
+                }
+            }
+        }
+        else if (choice == "4")
+        {
+            Doctor[] doctors = clinic.Doctors.GetAll()
+                .WithAppointments(appointments)
+                .ToArray();
+
+            if (doctors.Length == 0)
+            {
+                Console.WriteLine("Лікарів із записами не знайдено.");
+            }
+            else
+            {
+                Console.WriteLine("=== Лікарі з призначеними записами ===");
+
+                foreach (Doctor doctor in doctors)
+                {
+                    Console.WriteLine(doctor);
+                }
+            }
+        }
+        else if (choice == "5")
+        {
+            AppointmentFilter filter = new AppointmentFilter();
+
+            filter
+                .Add(a => a is UrgentAppointment)
+                .And(a => a.IsUpcoming);
+
+            IEnumerable<Appointment> results =
+                filter.Apply(appointments);
+
+            bool found = false;
+
+            foreach (Appointment appointment in results)
+            {
+                clinic.Appointments.DisplayAppointment(appointment);
+                found = true;
+            }
+
+            if (!found)
+            {
+                Console.WriteLine("Відповідних записів не знайдено.");
+            }
+        }
+        else if (choice == "6")
+        {
+            AppointmentFilter filter = new AppointmentFilter();
+
+            filter
+                .Add(a => a is UrgentAppointment)
+                .Or(a =>
+                    a.ScheduledAt < DateTime.Now &&
+                    !a.IsCancelled &&
+                    !a.IsPaid);
+
+            IEnumerable<Appointment> results =
+                filter.Apply(appointments);
+
+            bool found = false;
+
+            foreach (Appointment appointment in results)
+            {
+                clinic.Appointments.DisplayAppointment(appointment);
+                found = true;
+            }
+
+            if (!found)
+            {
+                Console.WriteLine("Відповідних записів не знайдено.");
+            }
+        }
+        else if (choice == "7")
+        {
+            Action<Appointment> print =
+                a => clinic.Appointments.DisplayAppointment(a);
+
+            Action<Appointment> log =
+                a => clinic.Logger.LogInfo(
+                    $"Оброблено запис #{a.Id}: {a}");
+
+            AppointmentProcessor processor =
+                new AppointmentProcessor();
+
+            processor.Combine(print, log);
+
+            processor.Execute(appointments);
+        }
+        else if (choice == "8")
+        {
+            clinic.Pipeline.Reset();
+
+            int processedCount = clinic.Pipeline
+                .Filter(a => a.IsUpcoming)
+                .Then(a => clinic.Appointments.DisplayAppointment(a))
+                .Execute(appointments);
+
+            Console.WriteLine(
+                $"Оброблено: {processedCount} записів.");
+        }
+        else if (choice == "0")
+        {
+            break;
+        }
+        else
+        {
+            Console.WriteLine("Невірний вибір.");
+        }
+    }
+}
+
 List<DoctorStats> CollectDoctorStats(Clinic clinic)
 {
     List<DoctorStats> stats = new List<DoctorStats>();
@@ -1948,6 +2158,7 @@ while (true)
     Console.WriteLine("║  9. Плани лікування — рефлексія, атрибути      ║");
     Console.WriteLine("║ 10. Файли          — журнал дій                ║");
     Console.WriteLine("║ 11. Звіти          — аналітичні звіти          ║");
+    Console.WriteLine("║ 12. Фільтри        — Func, Action, Pipeline    ║");
     Console.WriteLine("║  0. Вийти                                      ║");
     Console.WriteLine("╚════════════════════════════════════════════════╝");
     Console.Write("Оберіть: ");
@@ -1999,6 +2210,10 @@ while (true)
     else if (choice == "11")
     {
         ReportsMenu(clinic);
+    }
+    else if (choice == "12")
+    {
+        FunctionalMenu(clinic);
     }
     else if (choice == "0")
     {

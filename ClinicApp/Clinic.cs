@@ -29,6 +29,7 @@ public class Clinic
 
     public ClinicExporter Exporter { get; }
     public SessionManager Session { get; }
+    public AppointmentPipeline Pipeline { get; }
     public PatientPassportWriter Passport { get; }
     public SessionEventTracker Tracker { get; }
 
@@ -38,6 +39,7 @@ public class Clinic
 
         Logger = new ClinicLogger();
         Session = new SessionManager();
+        Pipeline = new AppointmentPipeline();
 
         Patients = new PatientManager();
         Doctors = new DoctorManager();
